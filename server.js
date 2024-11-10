@@ -20,7 +20,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-
+let chat_history = [];
 
 try {
   const data = fs.readFileSync(path.resolve(__dirname, 'chat_history.json'), 'utf-8');
