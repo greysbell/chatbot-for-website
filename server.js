@@ -60,7 +60,7 @@ app.post('/chat', async (req, res) => {
     const result = await chat.sendMessage(message);
 
     // Log the full result to inspect if it's the expected object structure
-    console.log("Result from AI:", result);
+    console.log("Result from AI:", result.response.text());
 
     // Extract the model's response and send back to the client
     const modelResponse = result.response.text();
