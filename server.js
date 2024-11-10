@@ -1,4 +1,3 @@
-// Import necessary modules
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -58,6 +57,9 @@ app.post('/chat', async (req, res) => {
   try {
     console.log("Sending message to AI model:", message);
     const result = await chat.sendMessage(message);
+
+   
+    console.log("Result from AI:", result.response.text());
 
     const modelResponse = result.response.text();
     console.log("Model response text:", modelResponse);
