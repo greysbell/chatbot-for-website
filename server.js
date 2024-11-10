@@ -43,6 +43,7 @@ const chat = model.startChat({ history: chatHistory });
 
 app.post('/chat', async (req, res) => {
   const { message } = req.body;
+  console.log(message);
 
   if (!message || typeof message !== 'string' || message.trim() === '') {
     return res.status(400).json({ error: "Message cannot be empty." });
@@ -50,6 +51,7 @@ app.post('/chat', async (req, res) => {
 
   try {
     const result = await chat.sendMessage(message);
+    console.log("Result from AI:", result);
 
     const modelResponse = result.response.text();
 
