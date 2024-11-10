@@ -16,17 +16,10 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 
 app.use(cors({
-  origin: 'https://greysb.ca' 
+  origin: 'https://greysb.ca/' 
 }));
 
 app.use(express.json());
-
-
-let chatHistory = [];
-chatHistory.push({
-  role: "user",
-  parts: [{ text: systemInstruction }]
-});
 
 
 try {
@@ -40,7 +33,6 @@ try {
 } catch (error) {
   console.error("Failed to load chat history:", error);
 }
-
 
 console.log("Starting chat with initial history...");
 const chat = model.startChat({ history: chatHistory });
