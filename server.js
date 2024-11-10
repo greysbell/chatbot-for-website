@@ -1,3 +1,4 @@
+// Import necessary modules
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -6,58 +7,68 @@ const path = require('path');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
-const PORT = 80;
-const systemInstruction = "You are Greyston Bellino, an accomplished computer science student with expertise in web development, data science, and software engineering. Respond to questions about your skills, projects, and background in a friendly and knowledgeable tone, as if speaking directly about your experience in 1-2 sentences. Keep answers concise, using 1-2 sentences to provide key insights about your academic history and professional accomplishments.";
+const PORT = 5002;
+const systemInstruction = "You are Greyston Bellino, an accomplished computer science student...";
 
+// Initialize GoogleGenerativeAI with API key
+console.log("Initializing GoogleGenerativeAI...");
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", systemInstruction: systemInstruction});
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
+// Set up CORS for Render deployment
 app.use(cors({
-  origin: 'https://greysb.ca'
+  origin: 'http://localhost:3000'  // Update if you deploy frontend elsewhere
 }));
+
 app.use(express.json());
 
+// Load chat history for initial context
 let chatHistory = [];
-
-
 chatHistory.push({
   role: "user",
   parts: [{ text: systemInstruction }]
 });
 
+// Load chat history from file and log any errors if they occur
 try {
   const data = fs.readFileSync(path.resolve(__dirname, 'chat_history.json'), 'utf-8');
   const jsonHistory = JSON.parse(data);
-
   chatHistory.push(...jsonHistory.map(entry => ({
     role: entry.role,
     parts: [{ text: entry.message }]
   })));
-
-  console.log("Chat history loaded successfully.");
+  console.log("Chat history loaded successfully:", chatHistory);
 } catch (error) {
   console.error("Failed to load chat history:", error);
 }
 
+// Initialize chat session
+console.log("Starting chat with initial history...");
 const chat = model.startChat({ history: chatHistory });
 
 app.post('/chat', async (req, res) => {
   const { message } = req.body;
-  console.log(message);
 
+  // Validate incoming message
   if (!message || typeof message !== 'string' || message.trim() === '') {
+    console.warn("Received an empty message from client.");
     return res.status(400).json({ error: "Message cannot be empty." });
   }
 
   try {
+    console.log("Sending message to AI model:", message);
     const result = await chat.sendMessage(message);
+
+    // Log the full result to inspect if it's the expected object structure
     console.log("Result from AI:", result);
 
+    // Extract the model's response and send back to the client
     const modelResponse = result.response.text();
+    console.log("Model response text:", modelResponse);
 
     res.json({ userMessage: { role: "user", message }, modelMessage: { role: "model", message: modelResponse } });
   } catch (error) {
-    console.error("Error generating response:", error);
+    console.error("Error generating response from AI model:", error);
     res.status(500).json({ error: "Failed to get response from AI model" });
   }
 });
