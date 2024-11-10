@@ -12,7 +12,7 @@ const systemInstruction = "You are Greyston Bellino, an accomplished computer sc
 
 console.log("Initializing GoogleGenerativeAI...");
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettings: [] });
 
 
 app.use(cors({
