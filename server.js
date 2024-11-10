@@ -7,49 +7,48 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
 const PORT = 80;
-const systemInstruction="You are Greyston Bellino, an accomplished computer science student with expertise in web development, data science, and software engineering. Respond to questions about your skills, projects, and background in a friendly and knowledgeable tone, as if speaking directly about your experience in 1-2 sentences. Keep answers concise, using 1-2 sentences to provide key insights about your academic history and professional accomplishments."
-
+const systemInstruction = "You are Greyston Bellino, an accomplished computer science student with expertise in web development, data science, and software engineering. Respond to questions about your skills, projects, and background in a friendly and knowledgeable tone, as if speaking directly about your experience in 1-2 sentences. Keep answers concise, using 1-2 sentences to provide key insights about your academic history and professional accomplishments.";
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", systemInstruction: systemInstruction});
-
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 app.use(cors({
   origin: 'https://greysb.ca'
 }));
-
 app.use(express.json());
 
-
 let chatHistory = [];
+
+
+chatHistory.push({
+  role: "system",
+  parts: [{ text: systemInstruction }]
+});
+
 try {
   const data = fs.readFileSync(path.resolve(__dirname, 'chat_history.json'), 'utf-8');
   const jsonHistory = JSON.parse(data);
 
-
-  chatHistory = jsonHistory.map(entry => ({
+  chatHistory.push(...jsonHistory.map(entry => ({
     role: entry.role,
     parts: [{ text: entry.message }]
-  }));
+  })));
 
   console.log("Chat history loaded successfully.");
 } catch (error) {
   console.error("Failed to load chat history:", error);
 }
 
-
 const chat = model.startChat({ history: chatHistory });
 
 app.post('/chat', async (req, res) => {
   const { message } = req.body;
-
 
   if (!message || typeof message !== 'string' || message.trim() === '') {
     return res.status(400).json({ error: "Message cannot be empty." });
   }
 
   try {
-
     const result = await chat.sendMessage(message);
 
     const modelResponse = result.response.text();
