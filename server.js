@@ -16,7 +16,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettin
 
 
 app.use(cors({
-  origin: 'https://greysb.ca/' 
+  origin: 'https://greysb.ca' 
 }));
 
 app.use(express.json());
