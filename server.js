@@ -21,7 +21,7 @@ let chatHistory = [];
 
 
 chatHistory.push({
-  role: "system",
+  role: "user",
   parts: [{ text: systemInstruction }]
 });
 
