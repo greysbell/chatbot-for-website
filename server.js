@@ -16,7 +16,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 
 app.use(cors({
-  origin: 'https//:greysb.ca' 
+  origin: 'https://greysb.ca' 
 }));
 
 app.use(express.json());
@@ -57,9 +57,6 @@ app.post('/chat', async (req, res) => {
   try {
     console.log("Sending message to AI model:", message);
     const result = await chat.sendMessage(message);
-
-   
-    console.log("Result from AI:", result.response.text());
 
     const modelResponse = result.response.text();
     console.log("Model response text:", modelResponse);
