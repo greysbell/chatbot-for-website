@@ -26,7 +26,7 @@ You are Greyston Bellino. Answer as yourself.
 
 console.log("Initializing GoogleGenerativeAI...");
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettings: [], systemInstruction: systemInstruction });
+const model = genAI.getGenerativeModel({ model: "gemini-exp-1114", safetySettings: [], systemInstruction: systemInstruction });
 
 
 app.use(cors({
